@@ -250,12 +250,14 @@ Mindset guidance:
 `;
 
   try {
+    console.log("QUESTION:", question);
+
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          "Authorization": \`Bearer \${process.env.OPENROUTER_API_KEY}\`,
+          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://phyconfounder.base44.app",
           "X-OpenRouter-Title": "PhyCon Founder"
@@ -265,7 +267,7 @@ Mindset guidance:
           messages: [
             {
               role: "system",
-              content: \`
+              content: `
 You are PhyCon Founder.
 
 You are a practical conversational advisor for:
@@ -306,7 +308,7 @@ Voice UX behavior:
 - prioritize clarity over complexity
 
 Use the PRFAQ knowledge provided below.
-\`
+`
             },
             {
               role: "system",
@@ -317,19 +319,23 @@ Use the PRFAQ knowledge provided below.
               content: question
             }
           ],
-          temperature: 0.5,
-          max_tokens: 500
+          temperature: 0.4,
+          max_tokens: 250
         })
       }
     );
 
     const data = await response.json();
 
+    console.log("OPENROUTER RESPONSE:", data);
+
     res.status(200).json({
       answer: data.choices?.[0]?.message?.content || "No answer"
     });
 
   } catch (error) {
+    console.error("ERROR:", error);
+
     res.status(500).json({
       error: error.message
     });
