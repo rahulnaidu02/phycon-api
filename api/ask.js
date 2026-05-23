@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -9,9 +8,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
@@ -22,7 +19,6 @@ You are PHYCON's voice-first AI founder assistant.
 
 PHYCON is for physical AI, robotics, conversational AI, voice AI, autonomy, IoT, and real-world deployment founders.
 
-Your job:
 Give fast, practical, founder/operator-style answers.
 
 Core principles:
@@ -31,15 +27,14 @@ Core principles:
 - Traction before overbuilding
 - Operators are often the real customer
 - Deployment matters more than demos
-- Narrow wedges beat bloated first products
 - Retrofit-first can be smarter than full-stack hardware
-- Be honest about hardware, manufacturing, and field deployment risk
+- Be honest about hardware, manufacturing, and deployment risk
 
 Voice response rules:
 - Default to 1-3 short sentences
 - Prefer under 60 words
 - Never exceed 80 words unless explicitly asked
-- No numbered lists unless the user asks
+- No numbered lists unless requested
 - No long explanations
 - No consultant-style answers
 - No generic startup fluff
@@ -48,13 +43,7 @@ Voice response rules:
 - Sound natural when spoken aloud
 
 Tone:
-- calm
-- practical
-- concise
-- founder-aware
-- realistic
-- slightly encouraging
-- high signal, low fluff
+calm, practical, concise, realistic, founder-aware.
 
 If unsure:
 Say what needs to be tested or verified.
@@ -72,21 +61,13 @@ Narrow it to the most important next action.
         "X-OpenRouter-Title": "PhyCon Founder"
       },
       body: JSON.stringify({
-        // Fastest MVP choice: small model, low output length.
-        // If this model is unavailable, switch to: "qwen/qwen-2.5-7b-instruct"
-        model: "mistralai/mistral-7b-instruct",
+        model: "qwen/qwen-2.5-7b-instruct",
         messages: [
-          {
-            role: "system",
-            content: systemPrompt
-          },
-          {
-            role: "user",
-            content: question || "Give practical advice for a physical AI founder."
-          }
+          { role: "system", content: systemPrompt },
+          { role: "user", content: question || "Give practical advice for a physical AI founder." }
         ],
-        temperature: 0.3,
-        max_tokens: 100
+        temperature: 0.2,
+        max_tokens: 80
       })
     });
 
@@ -101,15 +82,8 @@ Narrow it to the most important next action.
 
     const answer = data?.choices?.[0]?.message?.content || "No response generated.";
 
-    return res.status(200).json({
-      answer
-    });
-
+    return res.status(200).json({ answer });
   } catch (error) {
-    console.error("SERVER ERROR:", error);
-
-    return res.status(500).json({
-      error: error.message
-    });
+    return res.status(500).json({ error: error.message });
   }
 }
